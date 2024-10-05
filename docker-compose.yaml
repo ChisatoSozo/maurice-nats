@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web-client:
+    build:
+      context: web-client
+      dockerfile: Dockerfile
+    ports:
+      - "${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}"
+    env_file:
+      - .env
+    networks:
+      - nats-network
+  nats:
+    image: nats:latest
+    container_name: nats-server
+    ports:
+      - "4222:4222" # NATS client port
+      - "8222:8222" # NATS monitoring port
+    env_file:
+      - .env
+    networks:
+      - nats-network
+
+networks:
+  nats-network:
+    driver: bridge
