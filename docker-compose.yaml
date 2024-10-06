@@ -1,6 +1,32 @@
-version: '3.8'
-
 services:
+  nats-echo:
+    build:
+      context: nats-echo
+      dockerfile: Dockerfile
+    ports:
+      - "${NATS_ECHO_PORT}:${NATS_ECHO_PORT}"
+    env_file:
+      - .env
+    networks:
+      - nats-network
+    volumes:
+      - /dev/tty1:/dev/ttyhost
+    privileged: true
+
+  speakers:
+    build:
+      context: speakers
+      dockerfile: Dockerfile
+    ports:
+      - "${SPEAKERS_PORT}:${SPEAKERS_PORT}"
+    env_file:
+      - .env
+    networks:
+      - nats-network
+    volumes:
+      - /dev/snd:/dev/snd
+    privileged: true
+
   web-client:
     build:
       context: web-client
@@ -11,14 +37,18 @@ services:
       - .env
     networks:
       - nats-network
-  nats:
+
+  nats-server:
     image: nats:latest
-    container_name: nats-server
     ports:
-      - "4222:4222" # NATS client port
-      - "8222:8222" # NATS monitoring port
+      - "${NATS_CLIENT_PORT}:${NATS_CLIENT_PORT}" # NATS client port
+      - "${NATS_MONITORING_PORT}:${NATS_MONITORING_PORT}" # NATS monitoring port
+      - "${NATS_WEBSOCKET_PORT}:${NATS_WEBSOCKET_PORT}" # WebSocket port
     env_file:
       - .env
+    volumes:
+      - ./nats-server/nats.conf:/nats.conf
+    command: -c /nats.conf
     networks:
       - nats-network
 

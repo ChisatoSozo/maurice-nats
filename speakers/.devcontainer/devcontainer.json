@@ -1,0 +1,12 @@
+{
+  "name": "Speakers",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "runArgs": [
+    "--device=/dev/snd",           // Mount the sound device from the host
+    "--group-add", "audio",        // Add the container to the "audio" group
+    "--privileged"                 // Grant necessary privileges
+  ]
+}

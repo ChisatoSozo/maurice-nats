@@ -4,10 +4,6 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-COPY scripts scripts
-
-RUN node scripts/downloadSchemas.js
-
 # Copy the package.json and yarn.lock files to the working directory
 COPY package.json yarn.lock ./
 
@@ -21,4 +17,4 @@ COPY . .
 EXPOSE ${WEB_CLIENT_PORT}
 
 # Specify the command to run the application using Yarn
-CMD ["yarn", "start"]
+CMD yarn dev --host 0.0.0.0 --port ${WEB_CLIENT_PORT}

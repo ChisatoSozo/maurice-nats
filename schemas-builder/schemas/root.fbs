@@ -1,0 +1,13 @@
+include "msg_print.fbs";
+include "msg_echo.fbs";
+include "msg_speakers.fbs";
+include "msg_error.fbs";
+
+union MessageContent { Print, Echo, SpeakerCommand, SpeakerQuery, SpeakerEvent, SpeakerListQuery, SpeakerListEvent, Error }
+
+table Message {
+  timestamp:ulong;
+  content:MessageContent;
+}
+
+root_type Message;

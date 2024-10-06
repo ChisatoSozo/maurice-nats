@@ -1,0 +1,12 @@
+[package]
+name = "speakers"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+alsa = "0.9.1"
+flatbuffers = "24.3.25"
+nats = "0.25.0"
+rand = "0.8.5"
+serde = "1.0.210"
+serde_json = "1.0.128"

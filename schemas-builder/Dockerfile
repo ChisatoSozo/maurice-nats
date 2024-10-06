@@ -10,23 +10,11 @@ RUN apk add --no-cache \
   make \
   curl \
   unzip \
-  python3 \
-  py3-pip \
-  rust \
-  cargo \
-  nodejs \
-  npm \
   clang \
   llvm-dev \
   libffi-dev \
   musl-dev \
   openssl-dev
-
-# Install Rustup separately (since apk rustup is not included in base Alpine repo)
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-# Add rust and cargo binaries to PATH
-ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Set the working directory
 WORKDIR /opt
@@ -47,8 +35,8 @@ RUN make install
 WORKDIR /workspace
 
 COPY schemas schemas
+COPY compile.sh compile.sh
 
-RUN set -x
-RUN flatc --rust -o out -I schemas
+RUN ./compile.sh
 
 CMD ["ls", "out"]

@@ -1,0 +1,105 @@
+// Define data types used for commands, queries, and events
+
+table SetMusicVolume {
+  volume:float;
+}
+
+table TogglePause {
+}
+
+table PlayYoutube {
+  url:string;
+}
+
+table PlayWav {
+  data:[ubyte]; // binary
+}
+
+union PlayContent { PlayYoutube, PlayWav }
+
+table Play {
+  content:PlayContent;
+}
+
+table Stop {
+}
+
+table Seek {
+  seek:float;
+}
+
+// Queries: No state changes, used for retrieving current state
+
+table QueryMusicVolume {
+}
+
+table QueryPause {
+}
+
+table QueryPlay {
+}
+
+table QuerySeek {
+}
+
+table QueryDuration {
+}
+
+// Events: Reflect outcomes of commands or state changes
+
+table MusicVolumeChanged {
+  volume:float;
+}
+
+table PlayStarted {
+  content:PlayContent;
+}
+
+table PlayStopped {
+}
+
+table SeekChanged {
+  seek:float;
+}
+
+table DurationChanged {
+  duration:float;
+}
+
+// Define unions for commands and events
+
+union SpeakerCommandContent { SetMusicVolume, TogglePause, Play, Stop, Seek }
+
+union SpeakerQueryContent { QueryMusicVolume, QueryPause, QueryPlay, QuerySeek, QueryDuration }
+
+union SpeakerEventContent { MusicVolumeChanged, PlayStarted, PlayStopped, SeekChanged, DurationChanged }
+
+// Command message structure
+
+table SpeakerCommand {
+  device_id:string;
+  command:SpeakerCommandContent;
+}
+
+// Query message structure
+
+table SpeakerQuery {
+  device_id:string;
+  query:SpeakerQueryContent;
+}
+
+// Query without device_id
+
+table SpeakerListQuery {
+}
+
+// Event message structure
+
+table SpeakerEvent {
+  device_id:string;
+  event:SpeakerEventContent;
+}
+
+table SpeakerListEvent {
+  device_ids:[string];
+}

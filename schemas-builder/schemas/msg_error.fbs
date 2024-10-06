@@ -1,0 +1,4 @@
+table Error {
+  from:string;
+  message:string;
+}

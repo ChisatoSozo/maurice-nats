@@ -1,35 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { wsconnect } from "@nats-io/nats-core";
+// import { Message } from "./schemas/message";
+// import { Builder } from "flatbuffers";
+// import { Print } from "./schemas/print";
+// import { MessageContent } from "./schemas/message-content";
+import {
+  createBrowserRouter,
+  Outlet,
+  RouteObject,
+  RouterProvider,
+} from "react-router-dom";
+import { UserSelectPage } from "./pages/UserSelectPage";
+import { ScaffoldPage } from "./pages/ScaffoldPage";
+import { HomePage } from "./pages/HomePage";
+import { AudioPage } from "./pages/AudioPage";
+import { NatsTestPage } from "./pages/NatsTestPage";
+import { LogoutPage } from "./pages/LogoutPage";
 
-function App() {
-  const [count, setCount] = useState(0)
+// const hi = async () => {
+//   const builder = new Builder(1024);
+//   const printOffset = Print.createPrint(
+//     builder,
+//     builder.createString("Hello from browser")
+//   );
+//   Message.startMessage(builder);
+//   Message.addTimestamp(builder, BigInt(Date.now()));
+//   Message.addContentType(builder, MessageContent.Print);
+//   Message.addContent(builder, printOffset);
+//   const messageOffset = Message.endMessage(builder);
+//   builder.finish(messageOffset);
+//   const buf = builder.asUint8Array();
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+//   const nc = await wsconnect({
+//     servers: ["ws://192.168.2.56:8080"],
+//   });
+//   nc.publish("print", buf);
+// };
 
-export default App
+// hi();
+
+const routes: RouteObject[] = [
+  {
+    path: "/",
+    element: <Outlet />,
+    children: [
+      {
+        path: "",
+        element: <UserSelectPage />,
+      },
+      {
+        path: ":user",
+        element: <ScaffoldPage />,
+        children: [
+          {
+            path: "",
+            element: <HomePage />,
+          },
+          {
+            path: "audio",
+            element: <AudioPage />,
+          },
+          {
+            path: "nats_test",
+            element: <NatsTestPage />,
+          },
+          {
+            path: "logout",
+            element: <LogoutPage />,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const router = createBrowserRouter(routes);
+
+export const App = () => {
+  return <RouterProvider router={router} />;
+};

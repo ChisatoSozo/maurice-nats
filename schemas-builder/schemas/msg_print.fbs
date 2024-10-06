@@ -1,0 +1,3 @@
+table Print {
+  message:string;
+}
