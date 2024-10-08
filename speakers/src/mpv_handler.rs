@@ -121,6 +121,32 @@ impl MpvHandler {
         _: SpeakerListQuery,
     ) -> Result<Option<Vec<u8>>, String> {
         let playback_devices = list_pcm_devices(Direction::Playback);
+
+        //add new devices to the state, remove devices that no longer exist
+        let mut devices_to_remove = Vec::new();
+        for (device_id, _) in self.state.iter() {
+            if !playback_devices.contains(&device_id) {
+                devices_to_remove.push(device_id.clone());
+            }
+        }
+
+        for device_id in devices_to_remove {
+            self.state.remove(&device_id);
+        }
+
+        for device_id in &playback_devices {
+            if !self.state.contains_key(device_id) {
+                self.state.insert(
+                    device_id.clone(),
+                    SpeakerState {
+                        music_volume: 100.0,
+                        mpv_process: None,
+                        mpv_sock: None,
+                    },
+                );
+            }
+        }
+
         return Ok(Some(construct_speaker_list_event_message(playback_devices)));
     }
 
@@ -191,8 +217,6 @@ impl MpvHandler {
                             .arg(url) // The YouTube URL
                             .arg("--no-video") // Skip video, play audio only
                             .arg(format!("--audio-device=alsa/{device_id}")) // The audio device to use
-                            .arg("ytdl-path=/usr/local/bin/yt-dlp")
-                            .arg("--user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.67'")
                             .arg(format!("--input-ipc-server=/tmp/mpv-socket-{}", device_id))
                             .spawn()
                             .map_err(|e| e.to_string())?;
@@ -248,7 +272,13 @@ impl MpvHandler {
                     }
                 }
             }
-            SpeakerCommandContent::Stop => {}
+            SpeakerCommandContent::Stop => {
+                if let Some(mpv_process) = &mut speaker_state.mpv_process {
+                    mpv_process.kill().map_err(|e| e.to_string())?;
+                    speaker_state.mpv_process = None;
+                    speaker_state.mpv_sock = None;
+                }
+            }
             SpeakerCommandContent::Seek => {}
             SpeakerCommandContent(MAX..=u8::MAX) => {
                 // Handle the command

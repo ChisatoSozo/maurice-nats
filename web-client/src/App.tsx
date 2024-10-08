@@ -15,6 +15,8 @@ import { HomePage } from "./pages/HomePage";
 import { AudioPage } from "./pages/AudioPage";
 import { NatsTestPage } from "./pages/NatsTestPage";
 import { LogoutPage } from "./pages/LogoutPage";
+import { SpeakerPage } from "./pages/SpeakerPage";
+import { NatsProvider } from "./nats/NatsProvider";
 
 // const hi = async () => {
 //   const builder = new Builder(1024);
@@ -60,6 +62,10 @@ const routes: RouteObject[] = [
             element: <AudioPage />,
           },
           {
+            path: "audio/:speaker",
+            element: <SpeakerPage />,
+          },
+          {
             path: "nats_test",
             element: <NatsTestPage />,
           },
@@ -76,5 +82,9 @@ const routes: RouteObject[] = [
 const router = createBrowserRouter(routes);
 
 export const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <NatsProvider>
+      <RouterProvider router={router} />
+    </NatsProvider>
+  );
 };

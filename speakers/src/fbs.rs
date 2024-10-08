@@ -1,8 +1,9 @@
 use nats::Connection;
 
 use crate::{
-    Message, MessageArgs, MessageContent, MusicVolumeChanged, MusicVolumeChangedArgs, SpeakerEvent,
-    SpeakerEventArgs, SpeakerEventContent, SpeakerListEvent, SpeakerListEventArgs,
+    Error, ErrorArgs, Message, MessageArgs, MessageContent, MusicVolumeChanged,
+    MusicVolumeChangedArgs, SpeakerEvent, SpeakerEventArgs, SpeakerEventContent, SpeakerListEvent,
+    SpeakerListEventArgs,
 };
 
 pub trait NcSendable {
@@ -99,13 +100,22 @@ pub fn construct_speaker_list_event_message(speakers: Vec<String>) -> Vec<u8> {
 pub fn construct_error_message(error: String) -> Vec<u8> {
     let mut fbb = flatbuffers::FlatBufferBuilder::new();
     let error_str = fbb.create_string(&error);
+    let from_str = fbb.create_string("speakers");
+
+    let error = Error::create(
+        &mut fbb,
+        &ErrorArgs {
+            from: Some(from_str),
+            message: Some(error_str),
+        },
+    );
 
     let root = Message::create(
         &mut fbb,
         &MessageArgs {
             timestamp: 0,
             content_type: MessageContent::Error,
-            content: Some(error_str.as_union_value()),
+            content: Some(error.as_union_value()),
         },
     );
     fbb.finish(root, None);

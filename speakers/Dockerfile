@@ -19,8 +19,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* 
 
 RUN alsactl init && alsactl store
-RUN curl -L https://yt-dlp.org/downloads/latest/yt-dlp -o /usr/local/bin/yt-dlp
-RUN chmod a+rx /usr/local/bin/yt-dlp
+RUN wget -q https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
+RUN chmod +x /usr/local/bin/yt-dlp
 
 # Copy the Cargo.toml and Cargo.lock files to the container (if you have them)
 COPY Cargo.toml Cargo.lock ./

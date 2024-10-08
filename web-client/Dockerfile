@@ -13,8 +13,16 @@ RUN yarn install --frozen-lockfile
 # Copy the rest of the application files
 COPY . .
 
-# Expose the port that the application will run on (usually set in the app)
+# Build the application
+RUN yarn build
+
+# Install serve globally for serving static files
+RUN yarn global add serve
+
+# Expose the port that the application will run on
 EXPOSE ${WEB_CLIENT_PORT}
 
-# Specify the command to run the application using Yarn
-CMD yarn dev --host 0.0.0.0 --port ${WEB_CLIENT_PORT}
+# Command to serve the built application using `serve`
+# -s: Serve the 'build' directory (commonly the output for static apps like React)
+# -l: Specify the listening address and port (host:port)
+CMD serve -s dist -l tcp://0.0.0.0:${WEB_CLIENT_PORT}
