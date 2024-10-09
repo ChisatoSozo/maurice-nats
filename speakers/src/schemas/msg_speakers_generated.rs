@@ -309,16 +309,18 @@ pub struct SpeakerQueryContentUnionTableOffset {}
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 pub const ENUM_MIN_SPEAKER_EVENT_CONTENT: u8 = 0;
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-pub const ENUM_MAX_SPEAKER_EVENT_CONTENT: u8 = 5;
+pub const ENUM_MAX_SPEAKER_EVENT_CONTENT: u8 = 7;
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 #[allow(non_camel_case_types)]
-pub const ENUM_VALUES_SPEAKER_EVENT_CONTENT: [SpeakerEventContent; 6] = [
+pub const ENUM_VALUES_SPEAKER_EVENT_CONTENT: [SpeakerEventContent; 8] = [
   SpeakerEventContent::NONE,
   SpeakerEventContent::MusicVolumeChanged,
   SpeakerEventContent::PlayStarted,
   SpeakerEventContent::PlayStopped,
   SpeakerEventContent::SeekChanged,
   SpeakerEventContent::DurationChanged,
+  SpeakerEventContent::FileEnded,
+  SpeakerEventContent::PauseChanged,
 ];
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
@@ -332,9 +334,11 @@ impl SpeakerEventContent {
   pub const PlayStopped: Self = Self(3);
   pub const SeekChanged: Self = Self(4);
   pub const DurationChanged: Self = Self(5);
+  pub const FileEnded: Self = Self(6);
+  pub const PauseChanged: Self = Self(7);
 
   pub const ENUM_MIN: u8 = 0;
-  pub const ENUM_MAX: u8 = 5;
+  pub const ENUM_MAX: u8 = 7;
   pub const ENUM_VALUES: &'static [Self] = &[
     Self::NONE,
     Self::MusicVolumeChanged,
@@ -342,6 +346,8 @@ impl SpeakerEventContent {
     Self::PlayStopped,
     Self::SeekChanged,
     Self::DurationChanged,
+    Self::FileEnded,
+    Self::PauseChanged,
   ];
   /// Returns the variant's name or "" if unknown.
   pub fn variant_name(self) -> Option<&'static str> {
@@ -352,6 +358,8 @@ impl SpeakerEventContent {
       Self::PlayStopped => Some("PlayStopped"),
       Self::SeekChanged => Some("SeekChanged"),
       Self::DurationChanged => Some("DurationChanged"),
+      Self::FileEnded => Some("FileEnded"),
+      Self::PauseChanged => Some("PauseChanged"),
       _ => None,
     }
   }
@@ -2056,6 +2064,182 @@ impl core::fmt::Debug for DurationChanged<'_> {
       ds.finish()
   }
 }
+pub enum FileEndedOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct FileEnded<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for FileEnded<'a> {
+  type Inner = FileEnded<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> FileEnded<'a> {
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    FileEnded { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+    _args: &'args FileEndedArgs
+  ) -> flatbuffers::WIPOffset<FileEnded<'bldr>> {
+    let mut builder = FileEndedBuilder::new(_fbb);
+    builder.finish()
+  }
+
+}
+
+impl flatbuffers::Verifiable for FileEnded<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct FileEndedArgs {
+}
+impl<'a> Default for FileEndedArgs {
+  #[inline]
+  fn default() -> Self {
+    FileEndedArgs {
+    }
+  }
+}
+
+pub struct FileEndedBuilder<'a: 'b, 'b> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b> FileEndedBuilder<'a, 'b> {
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> FileEndedBuilder<'a, 'b> {
+    let start = _fbb.start_table();
+    FileEndedBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<FileEnded<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for FileEnded<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("FileEnded");
+      ds.finish()
+  }
+}
+pub enum PauseChangedOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct PauseChanged<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for PauseChanged<'a> {
+  type Inner = PauseChanged<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> PauseChanged<'a> {
+  pub const VT_PAUSED: flatbuffers::VOffsetT = 4;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    PauseChanged { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr>,
+    args: &'args PauseChangedArgs
+  ) -> flatbuffers::WIPOffset<PauseChanged<'bldr>> {
+    let mut builder = PauseChangedBuilder::new(_fbb);
+    builder.add_paused(args.paused);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn paused(&self) -> bool {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<bool>(PauseChanged::VT_PAUSED, Some(false)).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for PauseChanged<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<bool>("paused", Self::VT_PAUSED, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct PauseChangedArgs {
+    pub paused: bool,
+}
+impl<'a> Default for PauseChangedArgs {
+  #[inline]
+  fn default() -> Self {
+    PauseChangedArgs {
+      paused: false,
+    }
+  }
+}
+
+pub struct PauseChangedBuilder<'a: 'b, 'b> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b> PauseChangedBuilder<'a, 'b> {
+  #[inline]
+  pub fn add_paused(&mut self, paused: bool) {
+    self.fbb_.push_slot::<bool>(PauseChanged::VT_PAUSED, paused, false);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a>) -> PauseChangedBuilder<'a, 'b> {
+    let start = _fbb.start_table();
+    PauseChangedBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<PauseChanged<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for PauseChanged<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("PauseChanged");
+      ds.field("paused", &self.paused());
+      ds.finish()
+  }
+}
 pub enum SpeakerCommandOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -2776,6 +2960,36 @@ impl<'a> SpeakerEvent<'a> {
     }
   }
 
+  #[inline]
+  #[allow(non_snake_case)]
+  pub fn event_as_file_ended(&self) -> Option<FileEnded<'a>> {
+    if self.event_type() == SpeakerEventContent::FileEnded {
+      self.event().map(|t| {
+       // Safety:
+       // Created from a valid Table for this object
+       // Which contains a valid union in this slot
+       unsafe { FileEnded::init_from_table(t) }
+     })
+    } else {
+      None
+    }
+  }
+
+  #[inline]
+  #[allow(non_snake_case)]
+  pub fn event_as_pause_changed(&self) -> Option<PauseChanged<'a>> {
+    if self.event_type() == SpeakerEventContent::PauseChanged {
+      self.event().map(|t| {
+       // Safety:
+       // Created from a valid Table for this object
+       // Which contains a valid union in this slot
+       unsafe { PauseChanged::init_from_table(t) }
+     })
+    } else {
+      None
+    }
+  }
+
 }
 
 impl flatbuffers::Verifiable for SpeakerEvent<'_> {
@@ -2793,6 +3007,8 @@ impl flatbuffers::Verifiable for SpeakerEvent<'_> {
           SpeakerEventContent::PlayStopped => v.verify_union_variant::<flatbuffers::ForwardsUOffset<PlayStopped>>("SpeakerEventContent::PlayStopped", pos),
           SpeakerEventContent::SeekChanged => v.verify_union_variant::<flatbuffers::ForwardsUOffset<SeekChanged>>("SpeakerEventContent::SeekChanged", pos),
           SpeakerEventContent::DurationChanged => v.verify_union_variant::<flatbuffers::ForwardsUOffset<DurationChanged>>("SpeakerEventContent::DurationChanged", pos),
+          SpeakerEventContent::FileEnded => v.verify_union_variant::<flatbuffers::ForwardsUOffset<FileEnded>>("SpeakerEventContent::FileEnded", pos),
+          SpeakerEventContent::PauseChanged => v.verify_union_variant::<flatbuffers::ForwardsUOffset<PauseChanged>>("SpeakerEventContent::PauseChanged", pos),
           _ => Ok(()),
         }
      })?
@@ -2884,6 +3100,20 @@ impl core::fmt::Debug for SpeakerEvent<'_> {
         },
         SpeakerEventContent::DurationChanged => {
           if let Some(x) = self.event_as_duration_changed() {
+            ds.field("event", &x)
+          } else {
+            ds.field("event", &"InvalidFlatbuffer: Union discriminant does not match value.")
+          }
+        },
+        SpeakerEventContent::FileEnded => {
+          if let Some(x) = self.event_as_file_ended() {
+            ds.field("event", &x)
+          } else {
+            ds.field("event", &"InvalidFlatbuffer: Union discriminant does not match value.")
+          }
+        },
+        SpeakerEventContent::PauseChanged => {
+          if let Some(x) = self.event_as_pause_changed() {
             ds.field("event", &x)
           } else {
             ds.field("event", &"InvalidFlatbuffer: Union discriminant does not match value.")

@@ -18,9 +18,11 @@ const knownDevices: Record<
   {
     name: string;
     icon: React.ReactNode;
+    hide?: boolean;
   }
 > = {
   "plughw:CARD=MC1000,DEV=0": {
+    hide: true,
     name: "Don't use or I will hurt you",
     icon: <IconAlertCircle />,
   },
@@ -60,14 +62,16 @@ export const AudioPage = () => {
 
   return (
     <Grid>
-      {speakers.map((speaker) => (
-        <GridCol span={6} key={speaker}>
-          <Button onClick={() => navigate(encodeURIComponent(speaker))}>
-            {knownDevices[speaker]?.icon || <IconDeviceSpeaker />}
-            {knownDevices[speaker]?.name || speaker}
-          </Button>
-        </GridCol>
-      ))}
+      {speakers.map((speaker) =>
+        knownDevices[speaker]?.hide ? null : (
+          <GridCol span={6} key={speaker}>
+            <Button onClick={() => navigate(encodeURIComponent(speaker))}>
+              {knownDevices[speaker]?.icon || <IconDeviceSpeaker />}
+              {knownDevices[speaker]?.name || speaker}
+            </Button>
+          </GridCol>
+        )
+      )}
     </Grid>
   );
 };

@@ -66,13 +66,20 @@ table DurationChanged {
   duration:float;
 }
 
+table FileEnded {
+}
+
+table PauseChanged {
+  paused:bool;
+}
+
 // Define unions for commands and events
 
 union SpeakerCommandContent { SetMusicVolume, TogglePause, Play, Stop, Seek }
 
 union SpeakerQueryContent { QueryMusicVolume, QueryPause, QueryPlay, QuerySeek, QueryDuration }
 
-union SpeakerEventContent { MusicVolumeChanged, PlayStarted, PlayStopped, SeekChanged, DurationChanged }
+union SpeakerEventContent { MusicVolumeChanged, PlayStarted, PlayStopped, SeekChanged, DurationChanged, FileEnded, PauseChanged }
 
 // Command message structure
 

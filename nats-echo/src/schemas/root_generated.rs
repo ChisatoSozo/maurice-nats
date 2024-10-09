@@ -3,10 +3,10 @@
 
 // @generated
 
+use crate::msg_speakers_generated::*;
 use crate::msg_echo_generated::*;
 use crate::msg_error_generated::*;
 use crate::msg_print_generated::*;
-use crate::msg_speakers_generated::*;
 use core::mem;
 use core::cmp::Ordering;
 

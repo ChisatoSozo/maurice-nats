@@ -269,6 +269,15 @@ fn handle_speaker_event(message: &Message) -> String {
                 }
             }
 
+            SpeakerEventContent::FileEnded => "FileEnded".to_string(),
+            SpeakerEventContent::PauseChanged => {
+                if let Some(pause_changed) = speaker_event.event_as_pause_changed() {
+                    format!("PauseChanged: paused={}", pause_changed.paused())
+                } else {
+                    error_message("PauseChanged", "event_as_pause_changed was None")
+                }
+            }
+
             // Ensure exhaustive matching
             SpeakerEventContent(MAX_SPEAKER_EVENT_CONTENT..=u8::MAX) => {
                 "UNKNOWN SpeakerEventContent".to_string()

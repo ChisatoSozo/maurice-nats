@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   constructPlayYoutubeMessage,
   constructStopMessage,
+  constructTogglePauseMessage,
   sendMessage,
 } from "../nats/speakersNats";
 import { useNats } from "../nats/NatsProvider";
@@ -38,6 +39,17 @@ export const SpeakerPage = () => {
         }}
       >
         Stop
+      </Button>
+      <Button
+        onClick={() => {
+          sendMessage(
+            nc,
+            "speaker.command",
+            constructTogglePauseMessage(speaker)
+          );
+        }}
+      >
+        Pause
       </Button>
     </>
   );

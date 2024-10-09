@@ -32,8 +32,8 @@ pub use msg_speakers_generated::*;
 pub use root_generated::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut mpv_handler = MpvHandler::new()?;
     let nc = nats::connect("nats://nats-server:4222")?;
+    let mut mpv_handler = MpvHandler::new(&nc)?;
     //listen for messages on all subjects
     let sub = nc.subscribe("speaker.*")?;
 
@@ -45,6 +45,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let content = message.content_as_speaker_command().unwrap();
                 mpv_handler
                     .handle_speaker_command(content)
+                    .send(&nc, "speaker.event");
+            }
+            MessageContent::SpeakerQuery => {
+                let content = message.content_as_speaker_query().unwrap();
+                mpv_handler
+                    .handle_speaker_query(content)
                     .send(&nc, "speaker.event");
             }
             MessageContent::SpeakerListQuery => {
