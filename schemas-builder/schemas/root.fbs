@@ -1,9 +1,22 @@
+include "msg_playlists.fbs";
 include "msg_print.fbs";
 include "msg_echo.fbs";
 include "msg_speakers.fbs";
 include "msg_error.fbs";
 
-union MessageContent { Print, Echo, SpeakerCommand, SpeakerQuery, SpeakerEvent, SpeakerListQuery, SpeakerListEvent, Error }
+union MessageContent { 
+  Print, 
+  Echo, 
+  SpeakerCommand, 
+  SpeakerQuery, 
+  SpeakerEvent, 
+  SpeakerListQuery, 
+  SpeakerListEvent, 
+  PlaylistCommand,
+  PlaylistQuery,
+  PlaylistEvent,
+  Error
+}
 
 table Message {
   timestamp:ulong;

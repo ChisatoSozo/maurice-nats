@@ -1,0 +1,2 @@
+flatbuffers==24.3.25
+nats-py==2.9.0

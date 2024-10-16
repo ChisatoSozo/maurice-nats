@@ -9,12 +9,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconDeviceSpeaker,
-  IconHome,
-  IconLogout,
-  IconTestPipe,
-} from "@tabler/icons-react";
+import FeatherIcon from "feather-icons-react";
 import { Outlet, useNavigate, useParams, useLocation } from "react-router-dom";
 
 const NavButton = ({
@@ -99,16 +94,24 @@ export const ScaffoldPage = () => {
         }}
       >
         <Box>
-          <NavButton icon={<IconHome />} name="Home" path="/" />
-          <NavButton icon={<IconDeviceSpeaker />} name="Audio" path="/audio" />
+          <NavButton icon={<FeatherIcon icon="home" />} name="Home" path="/" />
           <NavButton
-            icon={<IconTestPipe />}
+            icon={<FeatherIcon icon="speaker" />}
+            name="Audio"
+            path="/audio"
+          />
+          <NavButton
+            icon={<FeatherIcon icon="code" />}
             name="Nats Test"
             path="/nats_test"
           />
         </Box>
         <Box>
-          <NavButton icon={<IconLogout />} name="Logout" path="/logout" />
+          <NavButton
+            icon={<FeatherIcon icon="log-out" />}
+            name="Logout"
+            path="/logout"
+          />
           <Text
             size="sm"
             style={{

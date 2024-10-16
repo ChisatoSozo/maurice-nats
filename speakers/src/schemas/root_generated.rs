@@ -7,6 +7,7 @@ use crate::msg_speakers_generated::*;
 use crate::msg_echo_generated::*;
 use crate::msg_error_generated::*;
 use crate::msg_print_generated::*;
+use crate::msg_playlists_generated::*;
 use core::mem;
 use core::cmp::Ordering;
 
@@ -16,10 +17,10 @@ use self::flatbuffers::{EndianScalar, Follow};
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 pub const ENUM_MIN_MESSAGE_CONTENT: u8 = 0;
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
-pub const ENUM_MAX_MESSAGE_CONTENT: u8 = 8;
+pub const ENUM_MAX_MESSAGE_CONTENT: u8 = 11;
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 #[allow(non_camel_case_types)]
-pub const ENUM_VALUES_MESSAGE_CONTENT: [MessageContent; 9] = [
+pub const ENUM_VALUES_MESSAGE_CONTENT: [MessageContent; 12] = [
   MessageContent::NONE,
   MessageContent::Print,
   MessageContent::Echo,
@@ -28,6 +29,9 @@ pub const ENUM_VALUES_MESSAGE_CONTENT: [MessageContent; 9] = [
   MessageContent::SpeakerEvent,
   MessageContent::SpeakerListQuery,
   MessageContent::SpeakerListEvent,
+  MessageContent::PlaylistCommand,
+  MessageContent::PlaylistQuery,
+  MessageContent::PlaylistEvent,
   MessageContent::Error,
 ];
 
@@ -44,10 +48,13 @@ impl MessageContent {
   pub const SpeakerEvent: Self = Self(5);
   pub const SpeakerListQuery: Self = Self(6);
   pub const SpeakerListEvent: Self = Self(7);
-  pub const Error: Self = Self(8);
+  pub const PlaylistCommand: Self = Self(8);
+  pub const PlaylistQuery: Self = Self(9);
+  pub const PlaylistEvent: Self = Self(10);
+  pub const Error: Self = Self(11);
 
   pub const ENUM_MIN: u8 = 0;
-  pub const ENUM_MAX: u8 = 8;
+  pub const ENUM_MAX: u8 = 11;
   pub const ENUM_VALUES: &'static [Self] = &[
     Self::NONE,
     Self::Print,
@@ -57,6 +64,9 @@ impl MessageContent {
     Self::SpeakerEvent,
     Self::SpeakerListQuery,
     Self::SpeakerListEvent,
+    Self::PlaylistCommand,
+    Self::PlaylistQuery,
+    Self::PlaylistEvent,
     Self::Error,
   ];
   /// Returns the variant's name or "" if unknown.
@@ -70,6 +80,9 @@ impl MessageContent {
       Self::SpeakerEvent => Some("SpeakerEvent"),
       Self::SpeakerListQuery => Some("SpeakerListQuery"),
       Self::SpeakerListEvent => Some("SpeakerListEvent"),
+      Self::PlaylistCommand => Some("PlaylistCommand"),
+      Self::PlaylistQuery => Some("PlaylistQuery"),
+      Self::PlaylistEvent => Some("PlaylistEvent"),
       Self::Error => Some("Error"),
       _ => None,
     }
@@ -293,6 +306,51 @@ impl<'a> Message<'a> {
 
   #[inline]
   #[allow(non_snake_case)]
+  pub fn content_as_playlist_command(&self) -> Option<PlaylistCommand<'a>> {
+    if self.content_type() == MessageContent::PlaylistCommand {
+      self.content().map(|t| {
+       // Safety:
+       // Created from a valid Table for this object
+       // Which contains a valid union in this slot
+       unsafe { PlaylistCommand::init_from_table(t) }
+     })
+    } else {
+      None
+    }
+  }
+
+  #[inline]
+  #[allow(non_snake_case)]
+  pub fn content_as_playlist_query(&self) -> Option<PlaylistQuery<'a>> {
+    if self.content_type() == MessageContent::PlaylistQuery {
+      self.content().map(|t| {
+       // Safety:
+       // Created from a valid Table for this object
+       // Which contains a valid union in this slot
+       unsafe { PlaylistQuery::init_from_table(t) }
+     })
+    } else {
+      None
+    }
+  }
+
+  #[inline]
+  #[allow(non_snake_case)]
+  pub fn content_as_playlist_event(&self) -> Option<PlaylistEvent<'a>> {
+    if self.content_type() == MessageContent::PlaylistEvent {
+      self.content().map(|t| {
+       // Safety:
+       // Created from a valid Table for this object
+       // Which contains a valid union in this slot
+       unsafe { PlaylistEvent::init_from_table(t) }
+     })
+    } else {
+      None
+    }
+  }
+
+  #[inline]
+  #[allow(non_snake_case)]
   pub fn content_as_error(&self) -> Option<Error<'a>> {
     if self.content_type() == MessageContent::Error {
       self.content().map(|t| {
@@ -325,6 +383,9 @@ impl flatbuffers::Verifiable for Message<'_> {
           MessageContent::SpeakerEvent => v.verify_union_variant::<flatbuffers::ForwardsUOffset<SpeakerEvent>>("MessageContent::SpeakerEvent", pos),
           MessageContent::SpeakerListQuery => v.verify_union_variant::<flatbuffers::ForwardsUOffset<SpeakerListQuery>>("MessageContent::SpeakerListQuery", pos),
           MessageContent::SpeakerListEvent => v.verify_union_variant::<flatbuffers::ForwardsUOffset<SpeakerListEvent>>("MessageContent::SpeakerListEvent", pos),
+          MessageContent::PlaylistCommand => v.verify_union_variant::<flatbuffers::ForwardsUOffset<PlaylistCommand>>("MessageContent::PlaylistCommand", pos),
+          MessageContent::PlaylistQuery => v.verify_union_variant::<flatbuffers::ForwardsUOffset<PlaylistQuery>>("MessageContent::PlaylistQuery", pos),
+          MessageContent::PlaylistEvent => v.verify_union_variant::<flatbuffers::ForwardsUOffset<PlaylistEvent>>("MessageContent::PlaylistEvent", pos),
           MessageContent::Error => v.verify_union_variant::<flatbuffers::ForwardsUOffset<Error>>("MessageContent::Error", pos),
           _ => Ok(()),
         }
@@ -431,6 +492,27 @@ impl core::fmt::Debug for Message<'_> {
         },
         MessageContent::SpeakerListEvent => {
           if let Some(x) = self.content_as_speaker_list_event() {
+            ds.field("content", &x)
+          } else {
+            ds.field("content", &"InvalidFlatbuffer: Union discriminant does not match value.")
+          }
+        },
+        MessageContent::PlaylistCommand => {
+          if let Some(x) = self.content_as_playlist_command() {
+            ds.field("content", &x)
+          } else {
+            ds.field("content", &"InvalidFlatbuffer: Union discriminant does not match value.")
+          }
+        },
+        MessageContent::PlaylistQuery => {
+          if let Some(x) = self.content_as_playlist_query() {
+            ds.field("content", &x)
+          } else {
+            ds.field("content", &"InvalidFlatbuffer: Union discriminant does not match value.")
+          }
+        },
+        MessageContent::PlaylistEvent => {
+          if let Some(x) = self.content_as_playlist_event() {
             ds.field("content", &x)
           } else {
             ds.field("content", &"InvalidFlatbuffer: Union discriminant does not match value.")

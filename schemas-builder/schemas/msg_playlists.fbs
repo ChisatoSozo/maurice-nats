@@ -1,0 +1,59 @@
+table Song {
+  url: string;
+  thumbnail_b64: string;
+  title: string;
+}
+
+table AddSong  {
+  song: Song;
+}
+
+table ReplaceSong {
+  index: int;
+  song: Song;
+}
+
+table RemoveSong {
+  index: int;
+}
+
+table InsertSong {
+  index: int;
+  song: Song;
+}
+
+table QueryPlaylistState {
+}
+
+table PlaylistStateChanged {
+  songs: [Song];
+}
+
+// Define unions for commands and events
+
+union PlaylistCommandContent { AddSong, ReplaceSong, RemoveSong, InsertSong }
+
+union PlaylistQueryContent { QueryPlaylistState }
+
+union PlaylistEventContent { PlaylistStateChanged }
+
+// Command message structure
+
+table PlaylistCommand {
+  device_id:string;
+  command:PlaylistCommandContent;
+}
+
+// Query message structure
+
+table PlaylistQuery {
+  device_id:string;
+  query:PlaylistQueryContent;
+}
+
+// Event message structure
+
+table PlaylistEvent {
+  device_id:string;
+  event:PlaylistEventContent;
+}

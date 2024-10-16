@@ -1,4 +1,3 @@
-import { IconAlertCircle, IconDeviceSpeaker } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import {
   constructQueryDeviceListMessage,
@@ -12,6 +11,7 @@ import { SpeakerListEvent } from "../schemas/speaker-list-event";
 import { Button, Grid, GridCol } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { useNats } from "../nats/NatsProvider";
+import FeatherIcon from "feather-icons-react";
 
 const knownDevices: Record<
   string,
@@ -24,11 +24,11 @@ const knownDevices: Record<
   "plughw:CARD=MC1000,DEV=0": {
     hide: true,
     name: "Don't use or I will hurt you",
-    icon: <IconAlertCircle />,
+    icon: <FeatherIcon icon="speaker" />,
   },
   "plughw:CARD=Generic,DEV=0": {
     name: "Main Speaker",
-    icon: <IconDeviceSpeaker />,
+    icon: <FeatherIcon icon="speaker" />,
   },
 };
 
@@ -39,9 +39,7 @@ export const AudioPage = () => {
 
   useEffect(() => {
     sendMessage(nc, "speaker.query", constructQueryDeviceListMessage());
-    const unsubscribe = subscribe(nc, "speaker.event", (msg) => {
-      const buf = new ByteBuffer(msg);
-      const message = Message.getRootAsMessage(buf);
+    const unsubscribe = subscribe(nc, "speaker.event", (message) => {
       const type = message.contentType();
 
       if (type == MessageContent.SpeakerListEvent) {
@@ -66,7 +64,7 @@ export const AudioPage = () => {
         knownDevices[speaker]?.hide ? null : (
           <GridCol span={6} key={speaker}>
             <Button onClick={() => navigate(encodeURIComponent(speaker))}>
-              {knownDevices[speaker]?.icon || <IconDeviceSpeaker />}
+              {knownDevices[speaker]?.icon || <FeatherIcon icon="speaker" />}
               {knownDevices[speaker]?.name || speaker}
             </Button>
           </GridCol>

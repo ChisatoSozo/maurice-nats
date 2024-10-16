@@ -1,0 +1,8 @@
+[package]
+name = "playlists"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flatbuffers = "24.3.25"
+nats = "0.25.0"

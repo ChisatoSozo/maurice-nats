@@ -26,6 +26,11 @@ if [ -n "$CONTAINER_ID" ]; then
   mkdir -p ./web-client/src/schemas
   cp -r /tmp/out/ts/* ./web-client/src/schemas
 
+    #Copy /tmp/out/ts to ./web-client/src/schemas
+  rm -rf ./voice/src/schemas
+  mkdir -p ./voice/src/schemas
+  cp -r /tmp/out/py/* ./voice/src/schemas
+
   #Copy /tmp/out/rs to ./nats-echo/src/schemas
   rm -rf ./nats-echo/src/schemas
   mkdir -p ./nats-echo/src/schemas
@@ -35,6 +40,11 @@ if [ -n "$CONTAINER_ID" ]; then
   rm -rf ./speakers/src/schemas
   mkdir -p ./speakers/src/schemas
   cp -r /tmp/out/rs/* ./speakers/src/schemas
+
+    #Copy /tmp/out/rs to ./speakers/src/schemas
+  rm -rf ./playlists/src/schemas
+  mkdir -p ./playlists/src/schemas
+  cp -r /tmp/out/rs/* ./playlists/src/schemas
 
   # Stop and remove the container
   docker stop "$CONTAINER_ID"

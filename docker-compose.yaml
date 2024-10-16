@@ -3,8 +3,6 @@ services:
     build:
       context: nats-echo
       dockerfile: Dockerfile
-    ports:
-      - "${NATS_ECHO_PORT}:${NATS_ECHO_PORT}"
     env_file:
       - .env
     networks:
@@ -17,8 +15,6 @@ services:
     build:
       context: speakers
       dockerfile: Dockerfile
-    ports:
-      - "${SPEAKERS_PORT}:${SPEAKERS_PORT}"
     env_file:
       - .env
     networks:
@@ -27,12 +23,35 @@ services:
       - /dev/snd:/dev/snd
     privileged: true
 
+  playlists:
+    build:
+      context: playlists
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - nats-network
+    privileged: true
+
   web-client:
     build:
       context: web-client
       dockerfile: Dockerfile
     ports:
       - "${WEB_CLIENT_PORT}:${WEB_CLIENT_PORT}"
+    env_file:
+      - .env
+    networks:
+      - nats-network
+    volumes:
+      - ./web-client/src:/usr/src/app/src
+
+  web-data-service:
+    build:
+      context: web-data-service
+      dockerfile: Dockerfile
+    ports:
+      - "${WEB_DATA_SERVICE_PORT}:${WEB_DATA_SERVICE_PORT}"
     env_file:
       - .env
     networks:

@@ -18,8 +18,13 @@ RUN cargo fetch
 COPY . .
 
 # Build the Rust application (replace 'release' with 'debug' if you prefer)
-RUN cargo build --release
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+  --mount=type=cache,target=/usr/local/cargo/git \
+  --mount=type=cache,target=/usr/src/app/target/release/incremental \
+  --mount=type=cache,target=/usr/src/app/target/release/build \
+  --mount=type=cache,target=/usr/src/app/target/release/deps \
+  --mount=type=cache,target=/usr/src/app/target/release/.fingerprint \
+  cargo build --release
 
-EXPOSE ${NATS_ECHO_PORT}
-
-CMD cargo run --release
+RUN chmod +x ./target/release/nats-echo
+CMD ./target/release/nats-echo

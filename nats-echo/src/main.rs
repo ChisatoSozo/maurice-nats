@@ -1,6 +1,10 @@
 extern crate flatbuffers;
 
 #[allow(dead_code, unused_imports)]
+#[path = "./schemas/msg_playlists_generated.rs"]
+mod msg_playlists_generated;
+
+#[allow(dead_code, unused_imports)]
 #[path = "./schemas/msg_speakers_generated.rs"]
 mod msg_speakers_generated;
 
@@ -22,6 +26,7 @@ mod root_generated;
 
 pub use msg_echo_generated::*;
 pub use msg_error_generated::*;
+pub use msg_playlists_generated::*;
 pub use msg_print_generated::*;
 pub use msg_speakers_generated::*;
 pub use root_generated::*;
@@ -118,6 +123,10 @@ fn process_message(message: &Message) -> String {
                 error_message("SpeakerListEvent", "content_as_speaker_list_event was None")
             }
         }
+
+        MessageContent::PlaylistCommand => handle_playlists_command(message),
+        MessageContent::PlaylistQuery => handle_playlists_query(message),
+        MessageContent::PlaylistEvent => handle_playlists_event(message),
 
         // Ensure exhaustive matching
         MessageContent(MAX_MESSAGE_CONTENT..=u8::MAX) => "UNKNOWN MessageContent".to_string(),
@@ -285,6 +294,137 @@ fn handle_speaker_event(message: &Message) -> String {
         }
     } else {
         error_message("SpeakerEvent", "content_as_speaker_event was None")
+    }
+}
+
+pub fn handle_song(song: Song) -> String {
+    let title = song.title().unwrap_or("{NO TITLE}");
+    let url = song.url().unwrap_or("{NO URL}");
+    let thumbnail = match song.thumbnail_b64() {
+        Some(_) => "[TRUNCATED DUE TO LENGTH]".to_string(),
+        None => "{NO THUMBNAIL}".to_string(),
+    };
+    format!(
+        "Song: title={}, url={}, thumbnail_b64={}",
+        title, url, thumbnail
+    )
+}
+
+pub fn handle_playlists_command(message: &Message) -> String {
+    if let Some(playlists_command) = message.content_as_playlist_command() {
+        const MAX_PLAYLISTS_COMMAND_CONTENT: u8 = PlaylistCommandContent::ENUM_MAX as u8 + 1;
+
+        match playlists_command.command_type() {
+            PlaylistCommandContent::NONE => "PlaylistCommand: NONE".to_string(),
+
+            PlaylistCommandContent::AddSong => {
+                if let Some(add_song) = playlists_command.command_as_add_song() {
+                    format!(
+                        "AddSong: song={{{}}}",
+                        add_song.song().map_or("{NO SONG}".to_string(), handle_song)
+                    )
+                } else {
+                    error_message("AddSong", "command_as_add was None")
+                }
+            }
+
+            PlaylistCommandContent::RemoveSong => {
+                if let Some(remove_song) = playlists_command.command_as_remove_song() {
+                    format!("RemoveSong: index={}", remove_song.index())
+                } else {
+                    error_message("RemoveSong", "command_as_remove_song was None")
+                }
+            }
+
+            PlaylistCommandContent::ReplaceSong => {
+                if let Some(replace_song) = playlists_command.command_as_replace_song() {
+                    format!(
+                        "ReplaceSong: song={{{}}} index={}",
+                        replace_song
+                            .song()
+                            .map_or("{NO SONG}".to_string(), handle_song),
+                        replace_song.index()
+                    )
+                } else {
+                    error_message("ReplaceSong", "command_as_replace_song was None")
+                }
+            }
+
+            PlaylistCommandContent::InsertSong => {
+                if let Some(insert_song) = playlists_command.command_as_insert_song() {
+                    format!(
+                        "InsertSong: song={{{}}} index={}",
+                        insert_song
+                            .song()
+                            .map_or("{NO SONG}".to_string(), handle_song),
+                        insert_song.index()
+                    )
+                } else {
+                    error_message("InsertSong", "command_as_insert_song was None")
+                }
+            }
+
+            PlaylistCommandContent(MAX_PLAYLISTS_COMMAND_CONTENT..=u8::MAX) => {
+                "UNKNOWN PlaylistCommandContent".to_string()
+            }
+        }
+    } else {
+        error_message("PlaylistCommand", "content_as_playlist_command was None")
+    }
+}
+
+pub fn handle_playlists_query(message: &Message) -> String {
+    if let Some(playlists_query) = message.content_as_playlist_query() {
+        const MAX_PLAYLISTS_QUERY_CONTENT: u8 = PlaylistQueryContent::ENUM_MAX as u8 + 1;
+
+        match playlists_query.query_type() {
+            PlaylistQueryContent::NONE => "PlaylistQuery: NONE".to_string(),
+
+            PlaylistQueryContent::QueryPlaylistState => "QueryPlaylistState".to_string(),
+
+            PlaylistQueryContent(MAX_PLAYLISTS_QUERY_CONTENT..=u8::MAX) => {
+                "UNKNOWN PlaylistQueryContent".to_string()
+            }
+        }
+    } else {
+        error_message("PlaylistQuery", "content_as_playlist_query was None")
+    }
+}
+
+pub fn handle_playlists_event(message: &Message) -> String {
+    if let Some(playlists_event) = message.content_as_playlist_event() {
+        const MAX_PLAYLISTS_EVENT_CONTENT: u8 = PlaylistEventContent::ENUM_MAX as u8 + 1;
+
+        match playlists_event.event_type() {
+            PlaylistEventContent::NONE => "PlaylistEvent: NONE".to_string(),
+
+            PlaylistEventContent::PlaylistStateChanged => {
+                if let Some(playlist_state_changed) =
+                    playlists_event.event_as_playlist_state_changed()
+                {
+                    format!(
+                        "PlaylistStateChanged: songs=[{}]",
+                        playlist_state_changed
+                            .songs()
+                            .map_or("{NO SONGS}".to_string(), |songs| {
+                                let songs: Vec<String> = songs.iter().map(handle_song).collect();
+                                songs.join(", ")
+                            })
+                    )
+                } else {
+                    error_message(
+                        "PlaylistStateChanged",
+                        "event_as_playlist_state_changed was None",
+                    )
+                }
+            }
+
+            PlaylistEventContent(MAX_PLAYLISTS_EVENT_CONTENT..=u8::MAX) => {
+                "UNKNOWN PlaylistEventContent".to_string()
+            }
+        }
+    } else {
+        error_message("PlaylistEvent", "content_as_playlist_event was None")
     }
 }
 
