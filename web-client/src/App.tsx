@@ -17,28 +17,7 @@ import { NatsTestPage } from "./pages/NatsTestPage";
 import { LogoutPage } from "./pages/LogoutPage";
 import { SpeakerPage } from "./pages/SpeakerPage";
 import { NatsProvider } from "./nats/NatsProvider";
-
-// const hi = async () => {
-//   const builder = new Builder(1024);
-//   const printOffset = Print.createPrint(
-//     builder,
-//     builder.createString("Hello from browser")
-//   );
-//   Message.startMessage(builder);
-//   Message.addTimestamp(builder, BigInt(Date.now()));
-//   Message.addContentType(builder, MessageContent.Print);
-//   Message.addContent(builder, printOffset);
-//   const messageOffset = Message.endMessage(builder);
-//   builder.finish(messageOffset);
-//   const buf = builder.asUint8Array();
-
-//   const nc = await wsconnect({
-//     servers: ["ws://192.168.2.56:8080"],
-//   });
-//   nc.publish("print", buf);
-// };
-
-// hi();
+import { HouseViewerPage } from "./pages/HouseViewerPage";
 
 const routes: RouteObject[] = [
   {
@@ -64,6 +43,10 @@ const routes: RouteObject[] = [
           {
             path: "audio/:speaker",
             element: <SpeakerPage />,
+          },
+          {
+            path: "house_viewer",
+            element: <HouseViewerPage />,
           },
           {
             path: "nats_test",

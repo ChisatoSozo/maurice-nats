@@ -256,3 +256,8 @@ function hslToRgb({ h, s, l }: { h: number; s: number; l: number }): {
     b: Math.round(255 * f(4)),
   };
 }
+
+export const feetAndInches = (feet: number, inches = 0): number => {
+  const inchesOut = feet * 12 + inches;
+  return inchesOut;
+};

@@ -101,6 +101,11 @@ export const ScaffoldPage = () => {
             path="/audio"
           />
           <NavButton
+            icon={<FeatherIcon icon="home" />}
+            name="House"
+            path="/house_viewer"
+          />
+          <NavButton
             icon={<FeatherIcon icon="code" />}
             name="Nats Test"
             path="/nats_test"

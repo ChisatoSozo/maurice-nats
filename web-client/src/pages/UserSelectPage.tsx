@@ -1,4 +1,3 @@
-import { Box } from "@mantine/core";
 import { Link } from "react-router-dom";
 
 export const UserSelectPage = () => {
@@ -6,7 +5,7 @@ export const UserSelectPage = () => {
   return (
     <ul>
       {users.map((user) => (
-        <li>
+        <li key={user}>
           <Link to={user}>{user}</Link>
         </li>
       ))}
